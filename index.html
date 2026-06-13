@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Finance Dashboard</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+    padding:20px;
+}
+
+.container{
+    max-width:1200px;
+    margin:auto;
+}
+
+.header{
+    background:#1e3a8a;
+    color:white;
+    padding:20px;
+    border-radius:10px;
+    margin-bottom:20px;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:15px;
+    margin-bottom:20px;
+}
+
+.card{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+
+.card h3{
+    color:#666;
+    margin-bottom:10px;
+}
+
+.amount{
+    font-size:28px;
+    font-weight:bold;
+    color:#1e3a8a;
+}
+
+.actions{
+    margin-bottom:20px;
+}
+
+button{
+    background:#1e3a8a;
+    color:white;
+    border:none;
+    padding:12px 18px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#162d6d;
+}
+
+.table-box{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,.1);
+    margin-bottom:20px;
+}
+
+input{
+    width:100%;
+    padding:10px;
+    margin-bottom:15px;
+    border:1px solid #ddd;
+    border-radius:6px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+table th, table td{
+    padding:12px;
+    border-bottom:1px solid #ddd;
+    text-align:left;
+}
+
+.credit{
+    color:green;
+    font-weight:bold;
+}
+
+.debit{
+    color:red;
+    font-weight:bold;
+}
+
+.chart-box{
+    background:white;
+    padding:20px;
+    border-radius:10px;
+    box-shadow:0 2px 8px rgba(0,0,0,.1);
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>Finance Dashboard</h1>
+        <p>Daily Transaction Monitor</p>
+    </div>
+
+    <div class="cards">
+        <div class="card">
+            <h3>Account Balance</h3>
+            <div class="amount">₹25,450</div>
+        </div>
+
+        <div class="card">
+            <h3>Today's Income</h3>
+            <div class="amount">₹3,000</div>
+        </div>
+
+        <div class="card">
+            <h3>Today's Expenses</h3>
+            <div class="amount">₹1,250</div>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button onclick="connectBank()">
+            Connect Bank Account
+        </button>
+    </div>
+
+    <div class="table-box">
+
+        <h2>Recent Transactions</h2>
+        <br>
+
+        <input
+            type="text"
+            id="search"
+            placeholder="Search transaction..."
+            onkeyup="filterTable()"
+        >
+
+        <table id="txnTable">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Description</th>
+                    <th>Amount</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                <tr>
+                    <td>13-06-2026</td>
+                    <td>Salary Credit</td>
+                    <td class="credit">+ ₹3000</td>
+                </tr>
+
+                <tr>
+                    <td>13-06-2026</td>
+                    <td>ATM Withdrawal</td>
+                    <td class="debit">- ₹500</td>
+                </tr>
+
+                <tr>
+                    <td>12-06-2026</td>
+                    <td>Grocery Store</td>
+                    <td class="debit">- ₹750</td>
+                </tr>
+
+                <tr>
+                    <td>11-06-2026</td>
+                    <td>Online Shopping</td>
+                    <td class="debit">- ₹1200</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <div class="chart-box">
+        <h2>Income vs Expense</h2>
+        <canvas id="financeChart"></canvas>
+    </div>
+
+</div>
+
+<script>
+
+function connectBank(){
+    alert(
+      "To connect a real bank account, integrate your bank's official API or India's Account Aggregator service."
+    );
+}
+
+function filterTable(){
+
+    let input =
+      document.getElementById("search").value.toLowerCase();
+
+    let rows =
+      document.querySelectorAll("#txnTable tbody tr");
+
+    rows.forEach(row => {
+
+        let text =
+          row.innerText.toLowerCase();
+
+        row.style.display =
+          text.includes(input) ? "" : "none";
+
+    });
+}
+
+const ctx =
+document.getElementById('financeChart');
+
+new Chart(ctx,{
+    type:'bar',
+    data:{
+        labels:[
+            'Mon',
+            'Tue',
+            'Wed',
+            'Thu',
+            'Fri',
+            'Sat',
+            'Sun'
+        ],
+        datasets:[
+            {
+                label:'Income',
+                data:[
+                    3000,
+                    2500,
+                    4000,
+                    2800,
+                    3500,
+                    5000,
+                    2000
+                ],
+                backgroundColor:'green'
+            },
+            {
+                label:'Expense',
+                data:[
+                    1200,
+                    800,
+                    1500,
+                    1000,
+                    1800,
+                    2200,
+                    900
+                ],
+                backgroundColor:'red'
+            }
+        ]
+    },
+    options:{
+        responsive:true
+    }
+});
+
+</script>
+
+</body>
+</html>
