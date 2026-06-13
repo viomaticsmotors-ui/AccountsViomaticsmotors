@@ -3,262 +3,373 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Viomaticsmotors Finance Dashboard</title>
+<title>Viomatics Motors Finance Dashboard</title>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
+
 *{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial,sans-serif;
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
 }
 
 body{
-    background:#f4f6f9;
-    padding:20px;
+background:#f4f6f9;
+padding:20px;
 }
 
 .container{
-    max-width:1200px;
-    margin:auto;
+max-width:1200px;
+margin:auto;
 }
 
 .header{
-    background:#1e3a8a;
-    color:white;
-    padding:20px;
-    border-radius:10px;
-    margin-bottom:20px;
+background:#1e3a8a;
+color:white;
+padding:20px;
+border-radius:10px;
+margin-bottom:20px;
 }
 
 .cards{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:15px;
-    margin-bottom:20px;
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:15px;
+margin-bottom:20px;
 }
 
 .card{
-    background:white;
-    padding:20px;
-    border-radius:10px;
-    box-shadow:0 2px 8px rgba(0,0,0,.1);
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 2px 8px rgba(0,0,0,.1);
 }
 
 .card h3{
-    color:#666;
-    margin-bottom:10px;
+color:#666;
+margin-bottom:10px;
 }
 
 .amount{
-    font-size:28px;
-    font-weight:bold;
-    color:#1e3a8a;
+font-size:28px;
+font-weight:bold;
+color:#1e3a8a;
 }
 
-.actions{
-    margin-bottom:20px;
-}
-
-button{
-    background:#1e3a8a;
-    color:white;
-    border:none;
-    padding:12px 18px;
-    border-radius:6px;
-    cursor:pointer;
-}
-
-button:hover{
-    background:#162d6d;
-}
-
-.table-box{
-    background:white;
-    padding:20px;
-    border-radius:10px;
-    box-shadow:0 2px 8px rgba(0,0,0,.1);
-    margin-bottom:20px;
+.table-box,
+.chart-box{
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 2px 8px rgba(0,0,0,.1);
+margin-bottom:20px;
 }
 
 input{
-    width:100%;
-    padding:10px;
-    margin-bottom:15px;
-    border:1px solid #ddd;
-    border-radius:6px;
+width:100%;
+padding:12px;
+border:1px solid #ddd;
+border-radius:6px;
+margin-bottom:15px;
+}
+
+button{
+background:#1e3a8a;
+color:white;
+border:none;
+padding:12px 20px;
+border-radius:6px;
+cursor:pointer;
+}
+
+button:hover{
+background:#162d6d;
 }
 
 table{
-    width:100%;
-    border-collapse:collapse;
+width:100%;
+border-collapse:collapse;
 }
 
-table th, table td{
-    padding:12px;
-    border-bottom:1px solid #ddd;
-    text-align:left;
+table th,
+table td{
+padding:12px;
+border-bottom:1px solid #ddd;
+text-align:left;
 }
 
-.credit{
-    color:green;
-    font-weight:bold;
-}
-
-.debit{
-    color:red;
-    font-weight:bold;
-}
-
-.chart-box{
-    background:white;
-    padding:20px;
-    border-radius:10px;
-    box-shadow:0 2px 8px rgba(0,0,0,.1);
-}
 </style>
 </head>
 <body>
 
 <div class="container">
 
-    <div class="header">
-        <h1>Finance Dashboard</h1>
-        <p>Daily Transaction Monitor</p>
-    </div>
+<div class="header">
+<h1>Finance Dashboard</h1>
+<p>Daily Transaction Monitor</p>
+</div>
 
-    <div class="cards">
-        <div class="card">
-            <h3>Account Balance</h3>
-            <div class="amount">₹25,450</div>
-        </div>
+<div class="table-box">
 
-        <div class="card">
-            <h3>Today's Income</h3>
-            <div class="amount">₹3,000</div>
-        </div>
+<h2>Connect Google Sheet</h2>
 
-        <div class="card">
-            <h3>Today's Expenses</h3>
-            <div class="amount">₹1,250</div>
-        </div>
-    </div>
+<input
+type="text"
+id="sheetUrl"
+placeholder="Paste Google Sheet URL Here">
 
-    <div class="actions">
-        <button onclick="connectBank()">
-            Connect Bank Account
-        </button>
-    </div>
+<button onclick="connectSheet()">
+Connect Sheet
+</button>
 
-    <div class="table-box">
+</div>
 
-        <h2>Recent Transactions</h2>
-        <br>
+<div class="cards">
 
-        <input
-            type="text"
-            id="search"
-            placeholder="Search transaction..."
-            onkeyup="filterTable()"
-        >
+<div class="card">
+<h3>Account Balance</h3>
+<div class="amount" id="balance">₹0</div>
+</div>
 
-        <table id="txnTable">
-            <thead>
-                <tr>
-                    <th>Date</th>
-                    <th>Description</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            </tbody>
-        </table>
+<div class="card">
+<h3>Today's Income</h3>
+<div class="amount" id="income">₹0</div>
+</div>
 
-    </div>
+<div class="card">
+<h3>Today's Expenses</h3>
+<div class="amount" id="expense">₹0</div>
+</div>
 
-    <div class="chart-box">
-        <h2>Income vs Expense</h2>
-        <canvas id="financeChart"></canvas>
-    </div>
+</div>
+
+<div class="table-box">
+
+<h2>Recent Transactions</h2>
+<br>
+
+<input
+type="text"
+id="search"
+placeholder="Search Transaction..."
+onkeyup="filterTable()">
+
+<table id="txnTable">
+
+<thead>
+<tr>
+<th>Date</th>
+<th>Description</th>
+<th>Amount</th>
+</tr>
+</thead>
+
+<tbody id="txnBody">
+</tbody>
+
+</table>
+
+</div>
+
+<div class="chart-box">
+
+<h2>Income vs Expense</h2>
+
+<canvas id="financeChart"></canvas>
+
+</div>
 
 </div>
 
 <script>
 
-function connectBank(){
-    alert(
-      "To connect a real bank account, integrate your bank's official API or India's Account Aggregator service."
-    );
-}
+let chart;
 
 function filterTable(){
 
-    let input =
-      document.getElementById("search").value.toLowerCase();
+let input =
+document.getElementById("search")
+.value.toLowerCase();
 
-    let rows =
-      document.querySelectorAll("#txnTable tbody tr");
+let rows =
+document.querySelectorAll("#txnBody tr");
 
-    rows.forEach(row => {
+rows.forEach(row=>{
 
-        let text =
-          row.innerText.toLowerCase();
+let text =
+row.innerText.toLowerCase();
 
-        row.style.display =
-          text.includes(input) ? "" : "none";
+row.style.display =
+text.includes(input)
+? ""
+: "none";
 
-    });
+});
+
 }
 
-const ctx =
-document.getElementById('financeChart');
+async function connectSheet(){
 
-new Chart(ctx,{
-    type:'bar',
-    data:{
-        labels:[
-            'Mon',
-            'Tue',
-            'Wed',
-            'Thu',
-            'Fri',
-            'Sat',
-            'Sun'
-        ],
-        datasets:[
-            {
-                label:'Income',
-                data:[
-                    3000,
-                    2500,
-                    4000,
-                    2800,
-                    3500,
-                    5000,
-                    2000
-                ],
-                backgroundColor:'green'
-            },
-            {
-                label:'Expense',
-                data:[
-                    1200,
-                    800,
-                    1500,
-                    1000,
-                    1800,
-                    2200,
-                    900
-                ],
-                backgroundColor:'red'
-            }
-        ]
-    },
-    options:{
-        responsive:true
-    }
+const sheetUrl =
+document.getElementById("sheetUrl")
+.value.trim();
+
+if(!sheetUrl){
+
+alert("Paste Google Sheet URL");
+
+return;
+
+}
+
+const match =
+sheetUrl.match(/\/d\/([a-zA-Z0-9-_]+)/);
+
+if(!match){
+
+alert("Invalid Sheet URL");
+
+return;
+
+}
+
+const sheetId = match[1];
+
+try{
+
+const dashboard =
+await fetch(
+`https://opensheet.elk.sh/${sheetId}/Dashboard`
+).then(r=>r.json());
+
+if(dashboard.length){
+
+document.getElementById("balance")
+.innerHTML =
+"₹" +
+dashboard[0]["Account Balance"];
+
+document.getElementById("income")
+.innerHTML =
+"₹" +
+dashboard[0]["Today's Income"];
+
+document.getElementById("expense")
+.innerHTML =
+"₹" +
+dashboard[0]["Today's Expenses"];
+
+}
+
+const transactions =
+await fetch(
+`https://opensheet.elk.sh/${sheetId}/Transactions`
+).then(r=>r.json());
+
+const tbody =
+document.getElementById("txnBody");
+
+tbody.innerHTML="";
+
+transactions.forEach(txn=>{
+
+tbody.innerHTML += `
+<tr>
+<td>${txn.Date}</td>
+<td>${txn.Description}</td>
+<td>₹${txn.Amount}</td>
+</tr>
+`;
+
 });
+
+const chartData =
+await fetch(
+`https://opensheet.elk.sh/${sheetId}/ChartData`
+).then(r=>r.json());
+
+const labels =
+chartData.map(item=>item.Day);
+
+const income =
+chartData.map(item=>
+Number(item.Income));
+
+const expense =
+chartData.map(item=>
+Number(item.Expense));
+
+if(chart){
+chart.destroy();
+}
+
+chart =
+new Chart(
+document.getElementById("financeChart"),
+{
+type:"bar",
+data:{
+labels:labels,
+datasets:[
+{
+label:"Income",
+data:income,
+backgroundColor:"green"
+},
+{
+label:"Expense",
+data:expense,
+backgroundColor:"red"
+}
+]
+},
+options:{
+responsive:true
+}
+}
+);
+
+localStorage.setItem(
+"sheetUrl",
+sheetUrl
+);
+
+}
+catch(error){
+
+console.error(error);
+
+alert(
+"Cannot load Google Sheet. Make sure it is published."
+);
+
+}
+
+}
+
+window.onload=()=>{
+
+const saved =
+localStorage.getItem("sheetUrl");
+
+if(saved){
+
+document.getElementById("sheetUrl")
+.value = saved;
+
+connectSheet();
+
+setInterval(
+connectSheet,
+30000
+);
+
+}
+
+};
 
 </script>
 
