@@ -1,326 +1,171 @@
-<body>
-
-<div id="loginPage">
-
-    <div class="login-box">
-
-        <h2>VIOMATICS LOGIN</h2>
-
-        <input type="email" id="userid"
-               placeholder="User ID">
-
-        <input type="password" id="password"
-               placeholder="Password">
-
-        <button onclick="login()">
-            Login
-        </button>
-
-        <p id="msg"></p>
-
-    </div>
-
-</div>
-
-
-<div id="mainPage" style="display:none;">
-
-    <div class="header">
-        <h1>
-            VIOMATICS CONSTRUCTION EXPENSE
-            <br>
-            Email: viomaticsmotors@gmail.com
-            <br>
-            Phone: 9395870636
-        </h1>
-
-        <h2>
-            Golaghat-Assam-785611
-            <br>
-            Badulipar Upper Temera - Temera Sari Ali
-        </h2>
-    </div>
-
-    <div class="container">
-
-        <input
-        type="text"
-        id="search"
-        class="search"
-        placeholder="Search..."
-        >
-
-        <div class="table-box">
-            <table id="sheetTable"></table>
-        </div>
-
-    </div>
-
-</div>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Viomatics Live Dashboard</title>
 
 <style>
 
-.login-box{
-    width:350px;
-    margin:100px auto;
-    background:white;
-    padding:25px;
-    border-radius:12px;
-    box-shadow:0 0 20px rgba(0,0,0,.1);
+body{
+margin:0;
+font-family:Arial;
+background:#f5f7fa;
 }
 
-.login-box h2{
-    text-align:center;
+.header{
+background:#1e3a8a;
+color:white;
+padding:20px;
+text-align:center;
 }
 
-.login-box input{
-    width:100%;
-    padding:12px;
-    margin-bottom:10px;
-    border:1px solid #ccc;
-    border-radius:5px;
-    box-sizing:border-box;
+.container{
+padding:20px;
 }
 
-.login-box button{
-    width:100%;
-    padding:12px;
-    background:#2563eb;
-    color:white;
-    border:none;
-    border-radius:5px;
-    cursor:pointer;
+.search{
+width:100%;
+padding:12px;
+margin-bottom:15px;
+font-size:16px;
 }
 
-#msg{
-    color:red;
-    text-align:center;
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+}
+
+th{
+background:#2563eb;
+color:white;
+padding:12px;
+}
+
+td{
+padding:10px;
+border:1px solid #ddd;
+}
+
+tr:nth-child(even){
+background:#f8fafc;
 }
 
 </style>
+</head>
+<body>
+
+<div class="header">
+<h1>VIOMATICS CONSTRUCTION EXPENSE</h1>
+</div>
+
+<div class="container">
+
+<input
+type="text"
+id="search"
+class="search"
+placeholder="Search..."
+>
+
+<table id="sheetTable"></table>
+
+</div>
 
 <script>
 
-const USER_ID =
-"viomaticsmotors@gmail.com";
-
-const PASSWORD =
-"Viomatics@123";
-
-function login(){
-
-    const user =
-    document.getElementById("userid").value.trim();
-
-    const pass =
-    document.getElementById("password").value.trim();
-
-    const msg =
-    document.getElementById("msg");
-
-    let failed =
-    parseInt(localStorage.getItem("failedAttempts")) || 0;
-
-    let lockTime =
-    localStorage.getItem("lockTime");
-
-    if(lockTime){
-
-        const now = Date.now();
-
-        if(now < Number(lockTime)){
-
-            const hrs =
-            Math.ceil(
-                (Number(lockTime)-now)
-                /(1000*60*60)
-            );
-
-            msg.innerHTML =
-            "Device Locked. Try again after "
-            + hrs +
-            " hour(s).";
-
-            return;
-        }
-        else{
-
-            localStorage.removeItem("lockTime");
-            localStorage.removeItem("failedAttempts");
-
-            failed = 0;
-        }
-    }
-
-    if(
-        user === USER_ID &&
-        pass === PASSWORD
-    ){
-
-        localStorage.setItem(
-            "loggedIn",
-            "yes"
-        );
-
-        document.getElementById("loginPage")
-        .style.display = "none";
-
-        document.getElementById("mainPage")
-        .style.display = "block";
-
-        loadData();
-
-        return;
-    }
-
-    failed++;
-
-    localStorage.setItem(
-        "failedAttempts",
-        failed
-    );
-
-    if(failed >= 2){
-
-        const next24 =
-        Date.now() +
-        24*60*60*1000;
-
-        localStorage.setItem(
-            "lockTime",
-            next24
-        );
-
-        msg.innerHTML =
-        "Too many attempts. Device locked for 24 hours.";
-    }
-    else{
-
-        msg.innerHTML =
-        "Wrong User ID or Password.";
-    }
-
-}
-
-
-window.onload = function(){
-
-    if(
-        localStorage.getItem("loggedIn")
-        === "yes"
-    ){
-
-        document.getElementById("loginPage")
-        .style.display = "none";
-
-        document.getElementById("mainPage")
-        .style.display = "block";
-
-        loadData();
-    }
-};
-
-
 const SHEET_ID =
-"1DBdjSigo4VWFmfCgL8Z8B4Xq4ZDKUSWOlv38duO1X20";
-
-const GID =
-"315964815";
+"1Glx-cxlOr_GKjDWhQeqnaMWkieZvaCkbImL8UhhDvsA";
 
 const url =
-`https://docs.google.com/spreadsheets/d/1Glx-cxlOr_GKjDWhQeqnaMWkieZvaCkbImL8UhhDvsA/edit?hl=en-GB&pli=1&gid=0#gid=0`;
+`https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
 async function loadData(){
 
-    try{
+try{
 
-        const res =
-        await fetch(url);
+const response =
+await fetch(url);
 
-        const txt =
-        await res.text();
+const text =
+await response.text();
 
-        const json =
-        JSON.parse(
-            txt.substring(47).slice(0,-2)
-        );
+const json =
+JSON.parse(text.substr(47).slice(0,-2));
 
-        let html = "";
+let html =
+"<thead><tr>";
 
-        html +=
-        "<thead><tr>";
+json.table.cols.forEach(col=>{
 
-        json.table.cols.forEach(col=>{
+html +=
+`<th>${col.label}</th>`;
 
-            html +=
-            `<th>${col.label || ''}</th>`;
-        });
+});
 
-        html +=
-        "</tr></thead><tbody>";
+html +=
+"</tr></thead><tbody>";
 
-        json.table.rows.forEach(row=>{
+json.table.rows.forEach(row=>{
 
-            html += "<tr>";
+html += "<tr>";
 
-            json.table.cols.forEach((c,i)=>{
+row.c.forEach(cell=>{
 
-                const cell =
-                row.c[i]
-                ? row.c[i].v
-                : "";
+html +=
+`<td>${cell ? cell.v : ""}</td>`;
 
-                html +=
-                `<td>${cell}</td>`;
-            });
+});
 
-            html += "</tr>";
-        });
+html += "</tr>";
 
-        html += "</tbody>";
+});
 
-        document.getElementById(
-            "sheetTable"
-        ).innerHTML = html;
-    }
-    catch(err){
+html += "</tbody>";
 
-        document.getElementById(
-            "sheetTable"
-        ).innerHTML =
-        "<tr><td>Unable to load Google Sheet</td></tr>";
-    }
+document.getElementById(
+"sheetTable"
+).innerHTML = html;
+
+}
+catch(error){
+
+document.getElementById(
+"sheetTable"
+).innerHTML =
+"<tr><td>Unable to load data</td></tr>";
+
 }
 
-setInterval(loadData,30000);
+}
 
-document.addEventListener("keyup",function(){
+loadData();
 
-    const search =
-    document.getElementById("search");
+setInterval(loadData,10000);
 
-    if(!search) return;
+document
+.getElementById("search")
+.addEventListener("keyup",function(){
 
-    let value =
-    search.value.toLowerCase();
+const value =
+this.value.toLowerCase();
 
-    let rows =
-    document.querySelectorAll(
-        "#sheetTable tbody tr"
-    );
+document
+.querySelectorAll("#sheetTable tbody tr")
+.forEach(row=>{
 
-    rows.forEach(row=>{
+row.style.display =
+row.innerText
+.toLowerCase()
+.includes(value)
+? ""
+: "none";
 
-        row.style.display =
-        row.innerText
-        .toLowerCase()
-        .includes(value)
-        ? ""
-        : "none";
-    });
+});
 
 });
 
 </script>
 
 </body>
+</html>
